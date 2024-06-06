@@ -1,118 +1,174 @@
-
-<script>
-export default {
-  name: 'Login',
-  data() {
-    return {
-      email: '',
-      password: ''
-    };
-  },
-  methods: {
-    handleLogin() {
-      // Handle login logic here
-    }
-  }
-};
-</script>
 <template>
-  <div class="login-container">
-    <div class="login-box">
-      <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google Logo" class="logo">
-      <h2>Sign in</h2>
-      <p>Use your Google Account</p>
-      <form @submit.prevent="handleLogin">
-        <div class="input-group">
-          <input type="email" v-model="email" placeholder="Email or phone" required>
-        </div>
-        <div class="input-group">
-          <input type="password" v-model="password" placeholder="Enter your password" required>
-        </div>
-        <button type="submit" class="login-button">Next</button>
-      </form>
-      <div class="links">
-        <a href="#">Forgot email?</a>
-        <a href="#">Create account</a>
-      </div>
-    </div>
-  </div>
+  <v-container class="login-container" align="center" fluid>
+    <v-row justify="center">
+      <v-col cols="12" md="6">
+        <v-card class="pa-6">
+          <v-img
+            src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png"
+            contain
+            height="30"
+            class="mb-4"
+          ></v-img>
+          <v-card-title class="headline mb-1 text-center">Sign in</v-card-title>
+          <v-card-subtitle class="mb-6 text-center subtitle">
+            Use your Google Account
+          </v-card-subtitle>
+          <v-form @submit.prevent="handleLogin" ref="form">
+            <div class="input-with-label">
+              <label>Email or phone</label>
+              <v-text-field
+                v-model="email"
+                :rules="[rules.required, rules.email]"
+                required
+                outlined
+                dense
+                class="blue-border"
+              ></v-text-field>
+            </div>
+            <div class="input-with-label">
+              <label>Password</label>
+              <v-text-field
+                v-model="password"
+                :rules="[rules.required]"
+                required
+                outlined
+                dense
+                class="blue-border"
+                type="password"
+              ></v-text-field>
+            </div>
+          </v-form>
+          <div class="forgot-email" align="left">
+            <span class="forgot-email-text">Forgot email?</span>
+            <br/><br>
+            <span class="additional-text">
+              Not your computer? Use Guest mode to sign in privately.
+              <br />
+              <a href="#" class="learn-more">Learn more</a>
+            </span>
+          </div>
+          <br>
+          <div class="d-flex justify-space-between">
+            <span class="forgot-email-text">Create Account</span>
+            <v-btn color="primary" @click="handleNext">Next</v-btn>
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
+<script>
+  import { ref } from 'vue'
 
+  export default {
+    name: 'Login',
+    setup() {
+      const email = ref('')
+      const password = ref('')
+      const form = ref(null)
+
+      const rules = {
+        required: value => !!value || 'Required.',
+        email: value => {
+          const pattern = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/
+          return pattern.test(value) || 'Invalid e-mail.'
+        },
+      }
+
+      const handleLogin = () => {
+        if (form.value.validate()) {
+          alert(`Email: ${email.value}, Password: ${password.value}`)
+        }
+      }
+
+      const handleNext = () => {
+        // Handle next button action here
+      }
+
+      return {
+        email,
+        password,
+        handleLogin,
+        handleNext,
+        rules,
+        form,
+      }
+    },
+  }
+</script>
 
 <style scoped>
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #f2f2f2;
-}
+  .login-container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-.login-box {
-  background: white;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  max-width: 400px;
-  width: 100%;
-}
+  .v-card {
+    max-width: 400px;
+    width: 100%;
+  }
 
-.logo {
-  width: 92px;
-  margin-bottom: 20px;
-}
+  .text-center {
+    text-align: center;
+  }
 
-h2 {
-  margin: 0;
-  margin-bottom: 10px;
-}
+  .subtitle {
+    font-weight: bold;
+  }
 
-p {
-  margin: 0;
-  margin-bottom: 20px;
-  color: #555;
-}
+  .v-btn {
+    text-transform: none;
+  }
 
-.input-group {
-  margin-bottom: 20px;
-}
+  .v-btn.text {
+    color: #1a73e8;
+  }
 
-input {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  box-sizing: border-box;
-}
+  .forgot-email-text {
+    text-transform: none;
+    color: #1a73e8;
+    cursor: pointer;
+  }
 
-.login-button {
-  width: 100%;
-  padding: 12px;
-  background-color: #4285f4;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-}
+  .additional-text {
+    display: block;
+    font-size: 12px;
+    color: #5f6368;
+    margin-top: 8px;
+  }
 
-.login-button:hover {
-  background-color: #357ae8;
-}
+  .learn-more {
+    text-decoration: none;
+    color: #1a73e8;
+  }
 
-.links {
-  margin-top: 20px;
-}
+  .input-with-label {
+    position: relative;
+    margin-bottom: 16px;
+  }
 
-.links a {
-  color: #4285f4;
-  text-decoration: none;
-  margin: 0 5px;
-}
+  .input-with-label label {
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background-color: white;
+    padding: 0 4px;
+    font-size: 12px;
+  }
 
-.links a:hover {
-  text-decoration: underline;
-}
+  .blue-border .v-text-field--outlined .v-input__control {
+    border-color: #1a73e8;
+  }
+
+  .forgot-email-btn {
+    color: #1a73e8;
+  }
+
+  .forgot-email-btn:hover {
+    background-color: transparent;
+    color: #1a73e8;
+  }
 </style>

@@ -3,14 +3,14 @@ import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
 import Loginfile from './components/Loginfile.vue'
 import Signup from './components/SignUp.vue'
+import ForgotPassword from './components/ForgotPassword.vue'
 </script>
 
 <template>
   <v-app>
-    <!-- <router-view></router-view> -->
-    <Loginfile/>
-    <SignUp/>
-
+    <router-view></router-view>
+    <!-- <Loginfile/> -->
+    <!-- <ForgotPassword/> -->
   </v-app>
 </template>
 
