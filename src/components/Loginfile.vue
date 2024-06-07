@@ -29,7 +29,7 @@
               <label>Password</label>
               <v-text-field
                 v-model="password"
-                :rules="[rules.required]"
+                :rules="[rules.required, rules.min]"
                 required
                 outlined
                 dense
@@ -40,62 +40,79 @@
           </v-form>
           <div class="forgot-email" align="left">
             <span class="forgot-email-text">Forgot email?</span>
-            <br/><br>
+            <br /><br />
             <span class="additional-text">
               Not your computer? Use Guest mode to sign in privately.
               <br />
               <a href="#" class="learn-more">Learn more</a>
             </span>
           </div>
-          <br>
+          <br />
           <div class="d-flex justify-space-between">
             <span class="forgot-email-text">Create Account</span>
-            <v-btn color="primary" @click="handleNext">Next</v-btn>
+            <v-btn color="primary" @click="handleLogin">Next</v-btn>
           </div>
         </v-card>
       </v-col>
     </v-row>
   </v-container>
 </template>
-
 <script>
-  import { ref } from 'vue'
+ import { ref } from 'vue'
+import { loginUser } from '../Services/UserService' 
 
-  export default {
-    name: 'Login',
-    setup() {
-      const email = ref('')
-      const password = ref('')
-      const form = ref(null)
+export default {
+  name: 'Login',
+  setup() {
+    const email = ref('')
+    const password = ref('')
+    const form = ref(null)
 
-      const rules = {
-        required: value => !!value || 'Required.',
-        email: value => {
-          const pattern = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/
-          return pattern.test(value) || 'Invalid e-mail.'
-        },
-      }
+    const rules = {
+      required: value => !!value || 'Required.',
+      email: value => {
+        const pattern = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/
+        return pattern.test(value) || 'Invalid e-mail.'
+      },
+      min: v => v.length >= 6 || 'Password must be at least 6 characters long.',
+    }
 
-      const handleLogin = () => {
-        if (form.value.validate()) {
-          alert(`Email: ${email.value}, Password: ${password.value}`)
+    const handleLogin = async () => {
+      if (form.value.validate()) {
+        try {
+          const reqData = {
+            email: email.value,
+            password: password.value,
+          }
+          const response = await loginUser(reqData)
+          alert('Login successful')
+          console.log('Response:', response)
+        } catch (error) {
+          alert('Login failed')
+          console.error('Error:', error)
         }
       }
+    }
 
-      const handleNext = () => {
+    const handleNext = () => {
+      if (form.value.validate()) {
         // Handle next button action here
+        console.log(`Email: ${email.value}`)
+        console.log(`Password: ${password.value}`)
       }
+    }
 
-      return {
-        email,
-        password,
-        handleLogin,
-        handleNext,
-        rules,
-        form,
-      }
-    },
-  }
+    return {
+      email,
+      password,
+      handleLogin,
+      handleNext,
+      rules,
+      form,
+    }
+  },
+}
+
 </script>
 
 <style scoped>

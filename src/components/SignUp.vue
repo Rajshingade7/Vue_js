@@ -1,47 +1,69 @@
 <script>
-  import { ref } from 'vue'
+ import { ref } from 'vue'
+import { signupUser } from '../Services/UserService' // Make sure to adjust the path as needed
+export default {
+  
+  name: 'Signup',
+  setup() {
+    const firstName = ref('')
+    const lastName = ref('')
+    const email = ref('')
+    const password = ref('')
+    const confirmPassword = ref('')
+    const showPassword = ref(false)
+    const form = ref(null)
 
-  export default {
-    name: 'Login',
-    setup() {
-      const firstName = ref('')
-      const lastName = ref('')
-      const username = ref('')
-      const password = ref('')
-      const confirmPassword = ref('')
-      const showPassword = ref(false)
-      const form = ref(null)
-
-      const rules = {
-        required: value => !!value || 'Required.',
+    const rules = {
+      required: value => !!value || 'Required.',
+      minLength: v => v.length >= 8 || 'Password must be at least 8 characters long.',
+      confirmPassword: value => value === password.value || 'Passwords must match.',
+      email: value => {
+        const pattern = /^[a-zA-Z0-9_]+$/
+        return pattern.test(value) || 'Invalid email. Only letters, numbers, and underscores are allowed.'
       }
+    }
 
-      const handleLogin = () => {
-        if (form.value.validate()) {
-          alert(
-            `First Name: ${firstName.value}, Last Name: ${lastName.value}, Username: ${username.value}, Password: ${password.value}`
-          )
+    const handleSignup = async () => {
+      if (form.value.validate()) {
+        try {
+          const reqData = {
+            "firstName": firstName.value,
+            "lastName": lastName.value,
+            "email": email.value,
+            "password": password.value,
+            "service":"advance"
+          }
+          console.log(reqData);
+          const response = await signupUser(reqData)
+          alert('Signup successful')
+          console.log('Response:', response)
+        } catch (error) {
+          alert('Signup failed')
+          console.error('Error:', error)
         }
       }
+    }
 
-      const handleNext = () => {
-        // Handle next button action here
-      }
+    const handleNext = () => {
+      // Handle next button action here
+    }
 
-      return {
-        firstName,
-        lastName,
-        username,
-        password,
-        confirmPassword,
-        showPassword,
-        handleLogin,
-        handleNext,
-        rules,
-        form,
-      }
-    },
-  }
+    return {
+      firstName,
+      lastName,
+      email,
+      password,
+      confirmPassword,
+      showPassword,
+      handleSignup,
+      handleNext,
+      rules,
+      form,
+    }
+  },
+}
+
+
 </script>
 <template>
   <v-container class="login-container" align="center" fluid>
@@ -61,7 +83,7 @@
               <v-card-title class="headline mb-1 text-center">
                 Create your Google account
               </v-card-title>
-              <v-form @submit.prevent="handleLogin" ref="form">
+              <v-form @submit.prevent="handleSignup" ref="form">
                 <v-row>
                   <v-col cols="12" sm="6">
                     <div class="input-with-label">
@@ -93,7 +115,7 @@
                 <div class="input-with-label">
                   <label>Username</label>
                   <v-text-field
-                    v-model="username"
+                    v-model="email"
                     :rules="[rules.required]"
                     required
                     outlined
@@ -117,7 +139,7 @@
                         :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="showPassword ? 'text' : 'password'"
                         @click:append="showPassword = !showPassword"
-                        :rules="[rules.required]"
+                        :rules="[rules.required, rules.minLength]"
                         required
                         outlined
                         dense
@@ -133,7 +155,7 @@
                         :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="showPassword ? 'text' : 'password'"
                         @click:append="showPassword = !showPassword"
-                        :rules="[rules.required]"
+                        :rules="[rules.required, rules.confirmPassword]"
                         required
                         outlined
                         dense
@@ -146,23 +168,24 @@
                   Use 8 or more characters with a mix of letters, numbers &
                   symbols
                 </div>
+                <br />
+                <div class="d-flex justify-space-between">
+                  <span class="forgot-email-text">Sign in instead</span>
+                  <v-btn color="primary" type="submit">Next</v-btn>
+                </div>
               </v-form>
-              <br />
-              <div class="d-flex justify-space-between">
-                <span class="forgot-email-text">Sign in instead</span>
-                <v-btn color="primary" @click="handleNext">Next</v-btn>
-              </div>
             </v-col>
-            <!-- Image and Text Section -->
+
             <v-col cols="12" md="6" class="additional-section">
               <v-img
-                src="../assets/logo.svg"
+                
+                src="../../public/Screenshot (10).png" alt="Signup"
                 contain
                 height="150"
-                class="mb-4"
+                class="mb-4 additionalimage"
               ></v-img>
               <div class="additional-section-text">
-                <h2>One account, All of google working of you</h2>
+                <h2>One account, All of Google working for you</h2>
               </div>
             </v-col>
           </v-row>
@@ -272,6 +295,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    
   }
 
   .additional-section-text h2 {
@@ -284,5 +308,15 @@
     font-size: 14px;
     color: #5f6368;
     margin-top: 8px;
+  }
+  .additionalimage{
+    width:60%;
+    max-height:40%;
+  }
+  @media(max-width: 800px) {
+    .additional-section{
+      display:none;
+    }
+    
   }
 </style>
