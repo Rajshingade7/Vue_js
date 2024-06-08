@@ -1,3 +1,64 @@
+<script>
+ import { ref } from 'vue'
+import { loginUser } from '../Services/UserService' 
+
+export default {
+  name: 'Login',
+  setup() {
+    const email = ref('')
+    const password = ref('')
+    const form = ref(null)
+
+    const rules = {
+      required: value => !!value || 'Required.',
+      email: value => {
+        const pattern = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/
+        return pattern.test(value) || 'Invalid e-mail.'
+      },
+      min: v => v.length >= 6 || 'Password must be at least 6 characters long.',
+    }
+
+    const handleLogin =  () => {
+      if (form.value.validate()) {
+        const reqData = {
+            email: email.value,
+            password: password.value,
+        };
+
+        loginUser(reqData)
+            .then(data => {
+                console.log(data);
+                alert('Login successful');
+                console.log('Response:', data);
+            })
+            .catch(error => {
+                alert('Login failed');
+                console.error('Error:', error);
+            });
+      }
+    }
+
+    const handleNext = () => {
+      if (form.value.validate()) {
+        // Handle next button action here
+        console.log(`Email: ${email.value}`)
+        console.log(`Password: ${password.value}`)
+      }
+    }
+
+    return {
+      email,
+      password,
+      handleLogin,
+      handleNext,
+      rules,
+      form,
+    }
+  },
+}
+
+</script>
+
 <template>
   <v-container class="login-container" align="center" fluid>
     <v-row justify="center">
@@ -15,8 +76,10 @@
           </v-card-subtitle>
           <v-form @submit.prevent="handleLogin" ref="form">
             <div class="input-with-label">
-              <label>Email or phone</label>
+              
               <v-text-field
+                variant="outlined"
+                label="Email or Phone no"
                 v-model="email"
                 :rules="[rules.required, rules.email]"
                 required
@@ -26,12 +89,12 @@
               ></v-text-field>
             </div>
             <div class="input-with-label">
-              <label>Password</label>
               <v-text-field
                 v-model="password"
+                label="password"
                 :rules="[rules.required, rules.min]"
                 required
-                outlined
+                variant="outlined"
                 dense
                 class="blue-border"
                 type="password"
@@ -57,63 +120,6 @@
     </v-row>
   </v-container>
 </template>
-<script>
- import { ref } from 'vue'
-import { loginUser } from '../Services/UserService' 
-
-export default {
-  name: 'Login',
-  setup() {
-    const email = ref('')
-    const password = ref('')
-    const form = ref(null)
-
-    const rules = {
-      required: value => !!value || 'Required.',
-      email: value => {
-        const pattern = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/
-        return pattern.test(value) || 'Invalid e-mail.'
-      },
-      min: v => v.length >= 6 || 'Password must be at least 6 characters long.',
-    }
-
-    const handleLogin = async () => {
-      if (form.value.validate()) {
-        try {
-          const reqData = {
-            email: email.value,
-            password: password.value,
-          }
-          const response = await loginUser(reqData)
-          alert('Login successful')
-          console.log('Response:', response)
-        } catch (error) {
-          alert('Login failed')
-          console.error('Error:', error)
-        }
-      }
-    }
-
-    const handleNext = () => {
-      if (form.value.validate()) {
-        // Handle next button action here
-        console.log(`Email: ${email.value}`)
-        console.log(`Password: ${password.value}`)
-      }
-    }
-
-    return {
-      email,
-      password,
-      handleLogin,
-      handleNext,
-      rules,
-      form,
-    }
-  },
-}
-
-</script>
 
 <style scoped>
   .login-container {

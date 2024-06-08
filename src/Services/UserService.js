@@ -1,6 +1,6 @@
 import { Post } from './AxiosService';
 
-export const loginUser = async (reqData) => {
+export const loginUser =  (reqData) => {
     console.log(reqData);
     const url = 'user/login';
     let headersOptions = {
@@ -9,16 +9,18 @@ export const loginUser = async (reqData) => {
             Authorization: 'token'
         }
     };
-    try { 
-        const response = await Post(url, reqData, headersOptions);
-        console.log("Login successful",response);
-        const userId=response.id;
-        localStorage.setItem('userId',userId);
+    return Post(url, reqData, headersOptions)
+    .then(response => {
+       
+        const token = response.data.id;
+        console.log(token);
+        localStorage.setItem('token', token);
         return response;
-    } catch (error) {
+    })
+    .catch(error => {
         console.error("Login failed", error);
         throw error;
-    }
+    });
 };
 
 export const signupUser = async (reqData) => {

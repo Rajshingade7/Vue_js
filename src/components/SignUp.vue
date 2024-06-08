@@ -2,6 +2,11 @@
  import { ref } from 'vue'
 import { signupUser } from '../Services/UserService' // Make sure to adjust the path as needed
 export default {
+  methods: {
+    changeColor() {
+      this.inputColor = 'blue';
+    },
+  },
   
   name: 'Signup',
   setup() {
@@ -12,6 +17,7 @@ export default {
     const confirmPassword = ref('')
     const showPassword = ref(false)
     const form = ref(null)
+    const inputColor=ref("black");
 
     const rules = {
       required: value => !!value || 'Required.',
@@ -22,16 +28,16 @@ export default {
         return pattern.test(value) || 'Invalid email. Only letters, numbers, and underscores are allowed.'
       }
     }
-
+    
     const handleSignup = async () => {
       if (form.value.validate()) {
         try {
           const reqData = {
-            "firstName": firstName.value,
-            "lastName": lastName.value,
-            "email": email.value,
-            "password": password.value,
-            "service":"advance"
+            firstName: firstName.value,
+            lastName: lastName.value,
+            email: email.value,
+            password: password.value,
+            service:"advance"
           }
           console.log(reqData);
           const response = await signupUser(reqData)
@@ -59,6 +65,8 @@ export default {
       handleNext,
       rules,
       form,
+      inputColor,
+      
     }
   },
 }
@@ -66,7 +74,7 @@ export default {
 
 </script>
 <template>
-  <v-container class="login-container" align="center" fluid>
+  <v-container class="signup-container" align="center" fluid>
     <v-row justify="center">
       <v-col cols="12" md="8">
         <v-card class="pa-6">
@@ -87,40 +95,47 @@ export default {
                 <v-row>
                   <v-col cols="12" sm="6">
                     <div class="input-with-label">
-                      <label>First name</label>
+                     
                       <v-text-field
                         v-model="firstName"
+                        label="First Name"
                         :rules="[rules.required]"
                         required
-                        outlined
+                        variant=outlined
                         dense
-                        class="blue-border"
+                        :style="{ color: inputColor }"
+                        @input="changeColor"
+                        class="first"
                       ></v-text-field>
                     </div>
                   </v-col>
                   <v-col cols="12" sm="6">
                     <div class="input-with-label">
-                      <label>Last name</label>
                       <v-text-field
+                        label="Last Name"
                         v-model="lastName"
                         :rules="[rules.required]"
                         required
-                        outlined
+                        variant=outlined
                         dense
-                        class="blue-border"
+                        :style="{ color: inputColor }"
+                        @input="changeColor"
+                        class="first"
                       ></v-text-field>
                     </div>
                   </v-col>
                 </v-row>
                 <div class="input-with-label">
-                  <label>Username</label>
-                  <v-text-field
+           <v-text-field
+           label="Username"
                     v-model="email"
                     :rules="[rules.required]"
                     required
-                    outlined
+                    variant=outlined
                     dense
-                    class="blue-border"
+                    :style="{ color: inputColor }"
+                        @input="changeColor"
+                    class="first"
                   ></v-text-field>
                   <div class="help-text" align="left">
                     You can use letters, numbers, and periods.
@@ -133,33 +148,33 @@ export default {
                 <v-row>
                   <v-col cols="12" sm="6">
                     <div class="input-with-label">
-                      <label>Password</label>
                       <v-text-field
+                      label="Password"
                         v-model="password"
-                        :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="showPassword ? 'text' : 'password'"
-                        @click:append="showPassword = !showPassword"
                         :rules="[rules.required, rules.minLength]"
                         required
-                        outlined
+                        variant=outlined
                         dense
-                        class="blue-border"
+                        :style="{ color: inputColor }"
+                        @input="changeColor"
+                        class="first"
                       ></v-text-field>
                     </div>
                   </v-col>
                   <v-col cols="12" sm="6">
                     <div class="input-with-label">
-                      <label>Confirm Password</label>
                       <v-text-field
+                      label="Confirm Password"
                         v-model="confirmPassword"
-                        :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                         :type="showPassword ? 'text' : 'password'"
-                        @click:append="showPassword = !showPassword"
                         :rules="[rules.required, rules.confirmPassword]"
                         required
-                        outlined
+                        variant=outlined
                         dense
-                        class="blue-border"
+                        :style="{ color: inputColor }"
+                        @input="changeColor"
+                        class="first"
                       ></v-text-field>
                     </div>
                   </v-col>
@@ -196,7 +211,7 @@ export default {
 </template>
 
 <style scoped>
-  .login-container {
+  .signup-container {
     height: 100vh;
     display: flex;
     align-items: center;
@@ -251,14 +266,16 @@ export default {
     position: absolute;
     top: -10px;
     left: 10px;
-    background-color: white;
+    background-color: #ce2020;
     padding: 0 4px;
     font-size: 12px;
   }
 
   .blue-border .v-text-field--outlined .v-input__control {
     border-color: #1a73e8;
+
   }
+ 
 
   .forgot-email-btn {
     color: #1a73e8;
@@ -312,6 +329,13 @@ export default {
   .additionalimage{
     width:60%;
     max-height:40%;
+  }
+  .checkbox{
+    border:1 px solid blue;
+    max-width: 10xp;
+  }
+  .first input {
+    color: inherit; /* Ensure the color is inherited from the parent element */
   }
   @media(max-width: 800px) {
     .additional-section{
