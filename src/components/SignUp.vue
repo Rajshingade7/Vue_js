@@ -19,6 +19,7 @@ export default {
     const form = ref(null)
     const inputColor=ref("black");
 
+
     const rules = {
       required: value => !!value || 'Required.',
       minLength: v => v.length >= 8 || 'Password must be at least 8 characters long.',
@@ -76,7 +77,7 @@ export default {
 <template>
   <v-container class="signup-container" align="center" fluid>
     <v-row justify="center">
-      <v-col cols="12" md="8">
+      <v-col cols="12" md="6">
         <v-card class="pa-6">
           <v-row>
             <!-- Form Section -->
@@ -105,7 +106,7 @@ export default {
                         dense
                         :style="{ color: inputColor }"
                         @input="changeColor"
-                        class="first"
+                        class="first2"
                       ></v-text-field>
                     </div>
                   </v-col>
@@ -120,7 +121,7 @@ export default {
                         dense
                         :style="{ color: inputColor }"
                         @input="changeColor"
-                        class="first"
+                        class="first2"
                       ></v-text-field>
                     </div>
                   </v-col>
@@ -135,7 +136,7 @@ export default {
                     dense
                     :style="{ color: inputColor }"
                         @input="changeColor"
-                    class="first"
+                    class="first2"
                   ></v-text-field>
                   <div class="help-text" align="left">
                     You can use letters, numbers, and periods.
@@ -158,26 +159,33 @@ export default {
                         dense
                         :style="{ color: inputColor }"
                         @input="changeColor"
-                        class="first"
+                        class="first2"
                       ></v-text-field>
+                      <v-checkbox
+label="Show Password"
+v-model="showPassword"
+class="custom-checkbox"
+></v-checkbox>
                     </div>
                   </v-col>
                   <v-col cols="12" sm="6">
                     <div class="input-with-label">
                       <v-text-field
-                      label="Confirm Password"
-                        v-model="confirmPassword"
-                        :type="showPassword ? 'text' : 'password'"
-                        :rules="[rules.required, rules.confirmPassword]"
-                        required
-                        variant=outlined
-                        dense
-                        :style="{ color: inputColor }"
-                        @input="changeColor"
-                        class="first"
-                      ></v-text-field>
+  label="Confirm Password"
+  v-model="confirmPassword"
+  :type="showPassword ? 'text' : 'password'"
+  :rules="[rules.required, rules.confirmPassword]"
+  required
+  variant="outlined"
+  dense
+  :style="{ color: inputColor }"
+  @input="changeColor"
+  class="first2"
+></v-text-field>
+
                     </div>
                   </v-col>
+                  
                 </v-row>
                 <div class="help-text" align="left">
                   Use 8 or more characters with a mix of letters, numbers &
@@ -334,8 +342,10 @@ export default {
     border:1 px solid blue;
     max-width: 10xp;
   }
-  .first input {
-    color: inherit; /* Ensure the color is inherited from the parent element */
+  
+  .first2 >>> .v-input__control {
+    /* Example deep selector styling */
+    height: 50px;;
   }
   @media(max-width: 800px) {
     .additional-section{
