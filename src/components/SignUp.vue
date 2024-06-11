@@ -193,8 +193,7 @@ class="custom-checkbox"
                 </div>
                 <br />
                 <div class="d-flex justify-space-between">
-                  <span class="forgot-email-text">Sign in instead</span>
-                  <v-btn color="primary" type="submit">Next</v-btn>
+                  <a href="login" class="forgot-email-text">Sign in instead</a>                  <v-btn color="primary" type="submit">Next</v-btn>
                 </div>
               </v-form>
             </v-col>

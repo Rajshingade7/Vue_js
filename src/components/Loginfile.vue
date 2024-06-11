@@ -1,6 +1,7 @@
 <script>
- import { ref } from 'vue'
-import { loginUser } from '../Services/UserService' 
+import { ref } from 'vue'
+import { loginUser } from '../Services/UserService'
+import signup from '../views/SignUpView.vue'
 
 export default {
   name: 'Login',
@@ -76,7 +77,6 @@ export default {
           </v-card-subtitle>
           <v-form @submit.prevent="handleLogin" ref="form">
             <div class="input-with-label">
-              
               <v-text-field
                 variant="outlined"
                 label="Email or Phone no"
@@ -102,7 +102,7 @@ export default {
             </div>
           </v-form>
           <div class="forgot-email" align="left">
-            <span class="forgot-email-text">Forgot email?</span>
+            <router-link to="/forgotpass" class="link">Forgot Password</router-link>
             <br /><br />
             <span class="additional-text">
               Not your computer? Use Guest mode to sign in privately.
@@ -112,8 +112,7 @@ export default {
           </div>
           <br />
           <div class="d-flex justify-space-between">
-            <span class="forgot-email-text">Create Account</span>
-            <v-btn color="primary" @click="handleLogin">Next</v-btn>
+            <router-link to="/signup" class="link">Create Account</router-link>
           </div>
         </v-card>
       </v-col>

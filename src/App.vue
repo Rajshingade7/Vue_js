@@ -4,11 +4,12 @@ import HelloWorld from './components/HelloWorld.vue'
 import Loginfile from './components/Loginfile.vue'
 import Signup from './components/SignUp.vue'
 import ForgotPassword from './components/ForgotPassword.vue'
+import Dashboard from './components/Dashboard.vue'
 </script>
 
 <template>
   <v-app>
-    <router-view></router-view>
+    <dashboard></dashboard>
     <!-- <Loginfile/> -->
     <!-- <ForgotPassword/> -->
   </v-app>
