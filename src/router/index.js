@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import signup from '../views/SignUpView.vue'
+import getallnotes from '../views/getallnotesView.vue'
 const routes= [
 
   {
@@ -25,6 +26,11 @@ const routes= [
     path: '/dashboard',
     name: 'dashboard',
     component: () => import('../views/Dashboard.vue')
+  },
+  {
+    path:'/getallnotes',
+    name:'getallnotes',
+    component:getallnotes
   },
   
 ]

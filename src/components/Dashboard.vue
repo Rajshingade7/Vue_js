@@ -1,6 +1,8 @@
 <script>
+import GetAllNotes from './GetAllNotes.vue'
 export default {
   data() {
+    
     return {
       drawer:true,
       rail:false,
@@ -21,8 +23,13 @@ export default {
         { date: '02/01/2023', text: 'HyperText Markup Language is the standard markup language for documents designed to be displayed in a web browser. It defines the content and structure of web content. It is often assisted by technologies such as Cascading Style Sheets and scripting languages such as JavaScript.' },
         { date: '01/01/2023', text: 'HyperText Markup Language is the standard markup language for documents designed to be displayed in a web browser. It defines the content and structure of web content. It is often assisted by technologies such as Cascading Style Sheets and scripting languages such as JavaScript.' },
       ],
+      
     };
+    
   },
+  components: {
+      GetAllNotes
+    },
   methods: {
     toggleDrawer() {
       this.rail = !this.rail;
@@ -119,67 +126,7 @@ export default {
                   </v-list>
               </v-navigation-drawer>
               <v-main>
-                <v-container>
-                  <div class="take_note">
-                    <v-card  class="u-border note-card" >
-                      <v-text-field
-                      @click="toggleContent"
-                        v-if="!showContent"
-                        label="Take a note..."
-                        density="compact"
-                        variant="flat"
-                        single-line
-                        class="title1"
-                        append-inner-icon="mdi-checkbox-outline"
-                        append-icon="mdi-checkbox-outline"
-                        
-                      >
-                    </v-text-field>
-                      <div v-else>
-                        <v-text-field
-                          label="Title"
-                          density="compact"
-                          variant="flat"
-                          single-line
-                          class="compact-text-field"
-                        ></v-text-field>
-                        <v-textarea
-                          rows="1"
-                          label="Take a note..."
-                          density="compact"
-                          variant="flat"
-                          single-line
-                          class="compact-text-field"
-                          style="margin-top: 10px;"
-                        ></v-textarea>
-                        <v-row class="mt-3">
-                          <v-col>
-                            <v-btn icon flat><v-icon>mdi-bell-plus-outline</v-icon></v-btn>
-                            <v-btn icon flat><v-icon>mdi-account-plus-outline</v-icon></v-btn>
-                            <v-btn icon flat><v-icon>mdi-palette-outline</v-icon></v-btn>
-                            <v-btn icon flat><v-icon>mdi-image-outline</v-icon></v-btn>
-                            <v-btn icon flat ><v-icon>mdi-archive-outline</v-icon></v-btn>
-                            <v-btn icon flat><v-icon>mdi-dots-vertical</v-icon></v-btn>
-                          </v-col>
-                          <v-col class="d-flex justify-end">
-                            <v-btn @click="hideContent" variant="plain">Close</v-btn>
-                          </v-col>
-                        </v-row>
-                      </div>
-                  </v-card>
-                  </div>
-                  
-                
-                
-                  <v-row>
-                    <v-col cols="12" sm="6" md="4" lg="3" v-for="note in notes" :key="note.date">
-                      <v-card class="note-card2">
-                        <v-card-title>{{ note.date }}</v-card-title>
-                        <v-card-text>{{ note.text }}</v-card-text>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </v-container>
+                <GetAllNotes/>
               </v-main>
 </v-app>
 </template>

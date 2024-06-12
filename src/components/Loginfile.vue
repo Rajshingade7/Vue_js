@@ -41,7 +41,6 @@ export default {
 
     const handleNext = () => {
       if (form.value.validate()) {
-        // Handle next button action here
         console.log(`Email: ${email.value}`)
         console.log(`Password: ${password.value}`)
       }
@@ -113,6 +112,7 @@ export default {
           <br />
           <div class="d-flex justify-space-between">
             <router-link to="/signup" class="link">Create Account</router-link>
+            <v-btn color="primary" @click="handleLogin">Next</v-btn>
           </div>
         </v-card>
       </v-col>
@@ -192,5 +192,12 @@ export default {
   .forgot-email-btn:hover {
     background-color: transparent;
     color: #1a73e8;
+  }
+  
+  .v-messages__message {
+    display:flex;
+    justify-content: center;
+    text-align: left !important;
+    width: 100% !important;
   }
 </style>

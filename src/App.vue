@@ -9,7 +9,8 @@ import Dashboard from './components/Dashboard.vue'
 
 <template>
   <v-app>
-    <dashboard></dashboard>
+    <!-- <dashboard></dashboard> -->
+     <router-view></router-view>
     <!-- <Loginfile/> -->
     <!-- <ForgotPassword/> -->
   </v-app>
