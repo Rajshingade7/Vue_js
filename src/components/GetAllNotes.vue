@@ -1,7 +1,7 @@
 <template>
     <v-container>
-      <create-note></create-note>
-      <display-notes></display-notes>
+      <create-note @noteCreated="refreshNotes"></create-note>
+      <display-notes ref="displayNotes"></display-notes>
     </v-container>
   </template>
   
@@ -13,6 +13,11 @@
     components: {
       CreateNote,
       DisplayNotes,
+    },
+    methods:{
+      refreshNotes(){
+        this.$refs.displayNotes.fetchNotes();
+      },
     },
   };
   </script>

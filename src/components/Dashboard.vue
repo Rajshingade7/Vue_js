@@ -68,7 +68,7 @@ export default {
 
         <v-spacer></v-spacer>
 
-        <v-col cols="12" md="6" class="d-flex justify-center">
+        <v-col cols="12" md="6" class="search">
             <v-text-field
               flat
               prepend-inner-icon="mdi-magnify"
@@ -134,13 +134,26 @@ export default {
 
 
 <style scoped>
+
 .keep-logo {
     height: 40px;
     width: auto;
   }
-  .search-box {
-    width: 100%;
-    height:50px;
+  .search{
+    display: flex;
+    justify-content:center ;
+    height: 60px;
+  }
+  .search-box .v-input__control {
+    height: 20px; 
+  }
+  .search-box input {
+    font-size: 14px; 
+    padding: 8px; 
+    height: 20px;  
+  }
+  element.style{
+    height:20px;
   }
   
   .v-text-field .v-input__control{
@@ -219,5 +232,6 @@ export default {
     display:flex;
     justify-content: center;
   }
+
   
 </style>
