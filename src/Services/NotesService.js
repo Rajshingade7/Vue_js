@@ -29,3 +29,12 @@ export const createNewNote = async (reqData) => {
         throw error;
     }
 };
+export const deleteNote = (note)=>{
+    const token = localStorage.getItem('token')
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: token
+    }
+    console.log("Removinng Notes...")
+    return Post('notes/trashNotes',note, { headers })
+  }

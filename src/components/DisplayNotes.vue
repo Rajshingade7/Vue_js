@@ -1,4 +1,50 @@
+<script>
+  import { deleteNote } from '@/Services/NotesService';
+  import NoteIcons from './NoteIcons.vue';
+  export default {
+    components:{
+      NoteIcons,
+    },
+    data() {
+      return {
+       
+        hoveredNote: null,
+       
+      };
+    },
+    props: {
+    notes: {
+      type: Array,
+      default: () => [],
+    },
+  },
+    computed:{
+      reversedNotes(){
+        return[...this.notes].reverse();
+      },
+    },
+    methods: {
+      async handleItemClick(index, noteId) {
+      if (index === 0) {
+        try {
+          const data = {
+            noteIdList: [noteId],
+            isDeleted: true,
+          };
+          
+          const response = await deleteNote(data);
+          console.log('Note deleted:', response);
+          this.$emit('noteDeleted',noteId);
 
+         
+        } catch (error) {
+          console.error('Error deleting note:', error);
+        }
+      }
+    },
+  },
+  };
+  </script>
 
    <template>
     <v-row>
@@ -15,85 +61,23 @@
         <v-card class="note-card2">
           <v-card-title>{{ note.title }}</v-card-title>
           <v-card-text>{{ note.description }}</v-card-text>
-          <div class="hover-icons">
-            <v-btn icon flat><v-icon size="18">mdi-bell-plus-outline</v-icon></v-btn>
-            <v-btn icon flat><v-icon size="18">mdi-account-plus-outline</v-icon></v-btn>
-            <v-btn icon flat><v-icon size="18">mdi-palette-outline</v-icon></v-btn>
-            <v-btn icon flat><v-icon size="18">mdi-image-outline</v-icon></v-btn>
-            <v-btn icon flat><v-icon size="18">mdi-archive-outline</v-icon></v-btn>
-            <v-menu offset-y>
-              <template v-slot:activator="{ props }">
-                <v-btn icon flat v-bind="props">
-                  <v-icon size="18">mdi-dots-vertical</v-icon>
-                </v-btn>
-              </template>
-              <v-list>
-                <v-list-item
-                  v-for="(item, index) in items"
-                  :key="index"
-                  :value="index"
-                >
-                  <v-list-item-title>{{ item.title }}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>           
-          </div>
-          
-          
-            <v-icon
-            v-if="hoveredNote === note.id"
-            icon
-            class="check-circle-btn" size="24">mdi-check-circle</v-icon>
-          
+          <note-icons
+          v-if="hoveredNote === note.id"
+          :items="items"
+          @itemClick="handleItemClick($event,note.id)"
+        />
+        <v-icon
+          v-if="hoveredNote === note.id"
+          icon
+          class="check-circle-btn"
+          size="24"
+        >mdi-check-circle</v-icon>
         </v-card>
       </v-col>
     </v-row>
   </template>
   
-  <script>
-  import { reactive, onMounted } from 'vue';
-  import { GetNotesList } from '@/Services/NotesService';
   
-  export default {
-    data() {
-      return {
-        notes: [],
-        loading: false,
-        error: null,
-        hoveredNote: null,
-        items: [
-        { title: 'Delete note' },
-        { title: 'Add label' },
-        { title: 'Add drawing' },
-        { title: 'Make a copy' },
-        {title:'Show tick boxes'},
-        {title:'Version history'},
-      ],
-      };
-    },
-    computed:{
-      reversedNotes(){
-        return[...this.notes].reverse();
-      },
-    },
-    methods: {
-      async fetchNotes() {
-        try {
-          const response = await GetNotesList();
-          console.log(response);
-          this.notes = response.data.data;
-        } catch (error) {
-          this.error = error.message;
-        } finally {
-          this.loading = false;
-        }
-      },
-    },
-    mounted() {
-      this.fetchNotes();
-    },
-  };
-  </script>
   
   <style scoped>
   .note-card2 {
@@ -104,31 +88,16 @@
     justify-content: space-between;
     position: relative;
     overflow: hidden;
-    padding-bottom: 40px;
     z-index: 0;
+    border:1px solid rgb(197, 193, 193);
+    border-bottom: none;
   }
   
-  .hover-icons {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    width: 100%;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    left: 5px;
-  }
-  
-  .note-card2:hover .hover-icons {
-    opacity: 1;
-  }
   
   .check-circle-btn {
     position: absolute;
-    top: -12px; /* Adjust to position the icon outside the card */
-    left: -12px; /* Adjust to position the icon outside the card */
+    top: -12px; 
+    left: -12px; 
     z-index:10;
   }
   </style>

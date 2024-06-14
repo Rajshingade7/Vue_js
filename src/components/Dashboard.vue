@@ -152,9 +152,10 @@ export default {
     padding: 8px; 
     height: 20px;  
   }
-  element.style{
-    height:20px;
-  }
+  element.style {
+    height: 45px!important;
+    margin-top: 10px!important;
+}
   
   .v-text-field .v-input__control{
     max-width: 50%;
@@ -166,8 +167,10 @@ export default {
   }
   .active-item {
     background-color: rgba(249, 212, 143, 0.867);
-    border-radius: 30px; 
-
+    border-radius: 0 30px 30px 0;
+    left:-5px;
+    top:0;
+    width:calc(100%+100px);
   }
   
   .v-list-item--active .v-list-item__content .v-list-item__title {
