@@ -22,6 +22,7 @@ export const createNewNote = async (reqData) => {
         }
     };
     try {
+        console.log("adding notes")
         const response = await Post(url, reqData, headersOptions);
         return response.data;
     } catch (error) {
@@ -37,4 +38,15 @@ export const deleteNote = (note)=>{
     }
     console.log("Removinng Notes...")
     return Post('notes/trashNotes',note, { headers })
+  }
+
+ 
+export const updateNote = (note)=>{
+    const token = localStorage.getItem('token')
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: token
+    }
+    console.log("updating Note...")
+    return Post('notes/updateNotes',note, { headers })
   }

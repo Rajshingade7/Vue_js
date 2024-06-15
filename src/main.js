@@ -5,12 +5,12 @@ import router from './router'
 import { createVuetify } from 'vuetify'
 import { mdi } from 'vuetify/lib/iconsets/mdi.mjs'
 import 'vuetify/dist/vuetify.min.css';
+import MasonryWall from '@yeger/vue-masonry-wall'
 
 
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
-// Components
 
 const vuetify = createVuetify({
   components,
@@ -21,6 +21,7 @@ const vuetify = createVuetify({
 const app = createApp(App)
 
 app.use(router)
-app.use(vuetify); // Use Vuetify
+app.use(vuetify);
+app.use(MasonryWall)
 
 app.mount('#app')
