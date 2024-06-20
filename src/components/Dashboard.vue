@@ -1,5 +1,7 @@
 <script>
 import GetAllNotes from './GetAllNotes.vue'
+import EditLabelDialog from './EditLabelDialog.vue';
+import {getAllLabels} from '../Services/LabelService'
 export default {
   data() {
     
@@ -8,21 +10,43 @@ export default {
       rail:false,
       selectedItem: 'notes',
       showContent: false,
+      showLabelDialog: false,
+      labels:[],
       items: [
         { icon: 'mdi-lightbulb-outline', title: 'Notes', value: 'notes' },
         { icon: 'mdi-bell-outline', title: 'Reminders', value: 'reminders' },
-        { icon: 'mdi-pencil-outline', title: 'Edit', value: 'edit' },
+        { icon: 'mdi-pencil-outline', title: 'Edit Label', value: 'edit' },
         { icon: 'mdi-archive-outline', title: 'Archive', value: 'archive' },
         { icon: 'mdi-delete-outline', title: 'Bin', value: 'bin' },
-      ],
-     
-      
-    };
-    
+      ], 
+    }; 
   },
   components: {
-      GetAllNotes
+      GetAllNotes,
+      EditLabelDialog,
     },
+    computed: {
+    navigationItems() {
+      if (!this.labels) {
+        return this.items;
+      }
+      // Combine items and labels for the navigation drawer
+      const labelItems = this.labels.map(label => ({
+        icon: 'mdi-label-outline',
+        title: label.label,
+        value: `label-${label.id}`,
+      }));
+
+      const itemsCopy = [...this.items];
+      const insertIndex = itemsCopy.findIndex(item => item.value === 'edit');
+
+      return [
+        ...itemsCopy.slice(0, insertIndex),
+        ...labelItems,
+        ...itemsCopy.slice(insertIndex),
+      ];
+    },
+  },
   methods: {
     toggleDrawer() {
       this.rail = !this.rail;
@@ -35,8 +59,25 @@ export default {
       this.showContent = false;
     },
     selectItem(value) {
-      this.selectedItem = value;
+      if (value === 'edit') {
+        this.showLabelDialog = true;
+      } else {
+        this.selectedItem = value;
+      }
     },
+    async refreshLabels(){
+      try {
+        const response = await getAllLabels();
+        console.log(response);
+        this.labels = response.data.data.details || [];
+      } catch (error) {
+        console.error('Error fetching labels:', error);
+      }
+    }
+  },
+  mounted(){
+    this.refreshLabels();
+  
   },
 };
 </script>
@@ -108,7 +149,7 @@ export default {
 
                 <v-list dense nav>
                     <v-list-item
-                      v-for="item in items"
+                      v-for="item in navigationItems"
                       :key="item.value"
                       :prepend-icon="item.icon"
                       :title="item.title"
@@ -118,8 +159,11 @@ export default {
                   </v-list>
               </v-navigation-drawer>
               <v-main>
-                <GetAllNotes :selected-item="selectedItem"/>
+                <GetAllNotes :selected-item="selectedItem" @showLabelDialog="showLabelDialog = true"/>
               </v-main>
+              <v-dialog v-model="showLabelDialog" max-width="400px">
+                <EditLabelDialog @closevent="showLabelDialog = false" @refreshLabel="refreshLabels" />
+              </v-dialog>
 </v-app>
 </template>
 

@@ -13,8 +13,9 @@ export const loginUser =  (reqData) => {
     .then(response => {
        
         const token = response.data.id;
-        console.log(token);
+        console.log(response.data);
         localStorage.setItem('token', token);
+        localStorage.setItem('userId', response.data.userId);
         return response;
     })
     .catch(error => {

@@ -70,8 +70,13 @@ export default {
         variant="flat"
         single-line
         class="title1"
-        append-inner-icon="mdi-checkbox-outline"
-      ></v-text-field>
+        >
+        <template #append-inner >
+          <v-icon class="innertitleicon">mdi-checkbox-outline</v-icon>
+          <v-icon class="innertitleicon">mdi-brush-outline</v-icon>
+          <v-icon class="innertitleicon">mdi-image-outline</v-icon>
+        </template>
+      </v-text-field>
       <div v-else>
         <v-text-field
           v-model="noteTitle"
@@ -80,6 +85,7 @@ export default {
           variant="flat"
           single-line
           class="compact-text-field"
+          append-inner-icon="mdi-pin-outline"
         ></v-text-field>
         <v-textarea
           v-model="noteText"
@@ -136,5 +142,8 @@ export default {
 .note-icons {
   display: flex;
   align-items: center;
+}
+.innertitleicon {
+  margin-right: 20px;
 }
 </style>

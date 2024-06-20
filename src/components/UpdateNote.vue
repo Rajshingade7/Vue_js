@@ -1,7 +1,6 @@
 <template>
   <v-dialog v-model="localDialog" max-width="600px">
-    <v-card>
-      
+    <v-card> 
       <v-card-text>
         <v-container>
           <v-row>

@@ -23,9 +23,43 @@ export const Get = (url, config={}) => {
         throw error;
     }
 };
-export const Put = () => {
 
+export const Delete = (url, config={}) => {
+    try {
+        const token = localStorage.getItem('token');
+        const headers = {
+            ...config.headers,
+            Authorization: `${token}`
+        }
+        return axios.delete(BASE_URL + url, {...config, headers});
+    } catch (error) {
+        console.error("There was an error making the DELETE request", error);
+        throw error;
+    }
 }
-export const Delete = () => {
-
-}
+export const Put = (url, data, config={}) => {
+    try {
+        const token = localStorage.getItem('token');
+        const headers = {
+            ...config.headers,
+            Authorization: `${token}`
+        }
+        return axios.put(BASE_URL + url, data, {...config, headers});
+    } catch (error) {
+        console.error("There was an error making the PUT request", error);
+        throw error;
+    }
+};
+export const Patch = (url, data, config={}) => {
+    try {
+        const token = localStorage.getItem('token');
+        const headers = {
+            ...config.headers,
+            Authorization: `${token}`
+        }
+        return axios.patch(BASE_URL + url, data, {...config, headers});
+    } catch (error) {
+        console.error("There was an error making the PATCH request", error);
+        throw error;
+    }
+};
