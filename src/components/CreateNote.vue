@@ -11,7 +11,7 @@ export default {
       noteTitle: '',
       noteText: '',
       selectedColor:'',
-      noteId:'2324'
+     
     };
   },
   methods: {
@@ -23,6 +23,7 @@ export default {
     },
     handleColorSelected(color){
        this.selectedColor=color;
+       console.log(this.selectedColor);
     },
     async handleClickOutside() {
       if (this.showContent) {
@@ -33,6 +34,7 @@ export default {
         };
         try {
           await createNewNote(reqData);
+          console.log(this.selectedColor,"here inside of handleclickoutside");
           this.$emit('noteCreated')
           this.noteTitle = '';
           this.noteText = '';
@@ -91,7 +93,7 @@ export default {
         ></v-textarea>
        <v-row class="icon-close-row">
         <v-col class="d-flex align-center">
-          <note-icons class="note-icons" :noteId="noteId" @colorSelected="handleColorSelected"></note-icons>
+          <note-icons class="note-icons" @colorSelected="handleColorSelected"></note-icons>
         </v-col>         
          <v-col class="d-flex justify-end align-center">
             <v-btn @click="checkContent" variant="plain">Close</v-btn>

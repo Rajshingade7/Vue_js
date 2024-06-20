@@ -108,11 +108,16 @@
       async selectColor(color) {
         this.selectedColor=color;
         try {
-        const response = await changeColorForNote({
+          if(this.noteId){
+            console.log(noteIdList,"noteidlist");
+            const response = await changeColorForNote({
           noteIdList: [this.noteId],
           color,
         });
         console.log('Note color changed:', response);
+
+          }
+        
 
         this.$emit('colorSelected', color);
       } catch (error) {
