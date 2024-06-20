@@ -14,6 +14,11 @@ const routes= [
     component:()=>import('../views/Loginvue.vue')
   },
   {
+    path:'/',
+    name:'login',
+    component:()=>import('../views/Loginvue.vue')
+  },
+  {
     path:'/signup',
     name:'signup',
     component:signup
@@ -39,5 +44,17 @@ const router = createRouter({
   routes
 })
 
-
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+  let isAuthenticated = false;
+  if (token) {
+    isAuthenticated = true;
+  }
+  
+  if (to.name !== 'login' && !isAuthenticated) {
+    next({ name: 'login' }); 
+  } else {
+    next(); 
+  }
+});
 export default router

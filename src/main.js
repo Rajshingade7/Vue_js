@@ -1,4 +1,4 @@
-import 'vuetify/styles'
+import 'vuetify/dist/vuetify.min.css';
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -15,7 +15,12 @@ import * as directives from 'vuetify/directives'
 const vuetify = createVuetify({
   components,
   directives,
-  mdi,
+  icons: {
+    defaultSet: 'mdi',
+    sets: {
+      mdi,
+    },
+  },
 })
 
 const app = createApp(App)

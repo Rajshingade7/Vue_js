@@ -1,36 +1,41 @@
-
-
-   <template>
-    <v-row class="icon-row">
-      <v-col class="d-flex">
-        <v-btn icon flat @click="handleIconClick('bell')"><v-icon size="18">mdi-bell-plus-outline</v-icon></v-btn>
-        <v-btn icon flat @click="handleIconClick('account')"><v-icon size="18">mdi-account-plus-outline</v-icon></v-btn>
-        <v-btn icon flat @click="handleIconClick('palette')" ref="paletteBtn"><v-icon size="18">mdi-palette-outline</v-icon></v-btn>
-        <v-btn icon flat @click="handleIconClick('image')"><v-icon size="18">mdi-image-outline</v-icon></v-btn>
-        <v-btn icon flat @click="handleIconClick('archive')"><v-icon size="18">mdi-archive-outline</v-icon></v-btn>
+<template>
+  <v-row class="icon-row">
+    <v-col class="iconcol">
+      <div class="allicon">
+        <v-icon size="18" class="icon-btn" @click="handleIconClick('bell')" >mdi-bell-plus-outline</v-icon>
+        <v-icon size="18" class="icon-btn" @click="handleIconClick('account')">mdi-account-plus-outline</v-icon>
+        <v-menu v-model="showColorPicker" offset-y>
+          <template v-slot:activator="{ props }">
+            <v-icon size="18" class="icon-btn" v-bind="props" v-on="on">mdi-palette-outline</v-icon>
+          </template>
+          <v-list class="color-list">
+            <v-list-item v-for="(color, index) in colors" :key="index" class="color-list-item" @click="selectColor(color)">
+              <v-avatar size="24">
+                <v-icon size="24" :color="color">mdi-circle</v-icon>
+              </v-avatar>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+        <v-icon size="18" class="icon-btn" @click="handleIconClick('image')" >mdi-image-outline</v-icon>
+        <v-icon size="18" class="icon-btn" @click="archiveNote" >mdi-archive-outline</v-icon>
         <v-menu offset-y>
           <template v-slot:activator="{ props }">
-            <v-btn icon flat v-bind="props">
-              <v-icon size="18">mdi-dots-vertical</v-icon>
-            </v-btn>
+            <v-icon size="18" class="icon-btn" v-bind="props" >mdi-dots-vertical</v-icon>
           </template>
           <v-list>
-            <v-list-item
-              v-for="(item, index) in items"
-              :key="index"
-              :value="index"
-              @click="handleItemClick(index)"
-            >
+            <v-list-item v-for="(item, index) in items" :key="index" :value="index" @click="handleItemClick(index)">
               <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
-      </v-col>
+      </div>
       
-    </v-row>
-  </template>
+    </v-col>
+  </v-row>
+</template>
   
   <script>
+  import { changeColorForNote } from '@/Services/NotesService';
   export default {
     props: {
       items: {
@@ -44,56 +49,123 @@
           { title: 'Version history' },
         ],
       },
-    },
-    data(){
-      return{
-        showColorPicker: false,
-        colors: [
-        '#FF0000', // Red
-        '#00FF00', // Green
-        '#0000FF', // Blue
-        '#FFFF00', // Yellow
-        '#FF00FF', // Magenta
-        '#00FFFF', // Cyan
-        '#FFA500', // Orange
-        '#800080', // Purple
-        '#008000', // Dark green
-        '#808000', // Olive
-        '#800000', // Maroon
-        '#008080', // Teal
-        '#FFC0CB', // Pink
-        '#800000', // Brown
-        '#000080', // Navy
-        '#808080', // Gray
-        '#FFFFFF', // White
-        '#000000', // Black
-        '#FFD700', // Gold
-        '#8B4513', // Saddle brown
+      colors: {
+      type: Array,
+      default: () => [
+        '#FF0000',
+        '#00FF00',
+        '#0000FF',
+        '#FFFF00',
+        '#FF00FF',
+        '#00FFFF',
+        '#FFA500',
+        '#800080',
+        '#008000',
+        '#808000',
+        '#800000',
+        '#008080',
+        '#FFC0CB',
+        '#800000',
+        '#000080',
+        '#808080',
+        '#FFFFFF',
+        '#000000',
+        '#FFD700',
+        '#8B4513',
       ],
-      }
+    },
+    noteId:{
+      type: String,
+      required: true,
+    },
+    },
+    data() {
+      return {
+        showColorPicker: false,
+        selectedColor:'',
+ 
+      };
     },
     methods: {
       handleIconClick(action) {
-        this.$emit('iconClick', action);
+        if (action === 'palette') {
+          this.showColorPicker = !this.showColorPicker;   
+        
+        }
+        else if(action==='archive'){
+          this.archiveNote();
+        } 
+        else {
+          this.$emit('iconClick', action);
+        }
       },
       handleItemClick(index) {
-        this.$emit('itemClick', index);
+        if(index===0){
+          this.$emit('itemClick', index);
+        }
+        
       },
+      async selectColor(color) {
+        this.selectedColor=color;
+        try {
+        const response = await changeColorForNote({
+          noteIdList: [this.noteId],
+          color,
+        });
+        console.log('Note color changed:', response);
+
+        this.$emit('colorSelected', color);
+      } catch (error) {
+        console.error('Error changing note color:', error);
+      }
+      this.showColorPicker = false;
+
+      },
+        
+      archiveNote() {
+        this.$emit('noteArchived');
+      },
+
     },
     name: 'NoteIcons',
   };
   </script>
-  
+
   <style scoped>
   .icon-row {
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    bottom:0;
-    left:0;
+    bottom: 0;
+    left: 0;
   }
-  
-  
-  
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  .color-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    padding: 0;
+  }
+  .color-list-item {
+    margin: 0 0;
+  }
+  .iconcol{
+    display:flex;
+    padding:10px;
+  }
+  .allicon{
+    display:flex;
+    justify-content:space-around;
+    width:100%;
+  }
   </style>
-  

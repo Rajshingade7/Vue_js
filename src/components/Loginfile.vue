@@ -1,6 +1,7 @@
 <script>
 import { ref } from 'vue'
 import { loginUser } from '../Services/UserService'
+import { useRouter } from 'vue-router'
 import signup from '../views/SignUpView.vue'
 
 export default {
@@ -9,6 +10,7 @@ export default {
     const email = ref('')
     const password = ref('')
     const form = ref(null)
+    const router = useRouter() 
 
     const rules = {
       required: value => !!value || 'Required.',
@@ -31,7 +33,9 @@ export default {
                 console.log(data);
                 alert('Login successful');
                 console.log('Response:', data);
+                router.push('/dashboard')
             })
+
             .catch(error => {
                 alert('Login failed');
                 console.error('Error:', error);

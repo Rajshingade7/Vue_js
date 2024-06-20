@@ -1,4 +1,6 @@
 <script>
+import { useRouter } from 'vue-router'
+
  import { ref } from 'vue'
 import { signupUser } from '../Services/UserService' // Make sure to adjust the path as needed
 export default {
@@ -18,6 +20,7 @@ export default {
     const showPassword = ref(false)
     const form = ref(null)
     const inputColor=ref("black");
+    const router = useRouter() 
 
 
     const rules = {
@@ -44,6 +47,7 @@ export default {
           const response = await signupUser(reqData)
           alert('Signup successful')
           console.log('Response:', response)
+          router.push('/login')
         } catch (error) {
           alert('Signup failed')
           console.error('Error:', error)

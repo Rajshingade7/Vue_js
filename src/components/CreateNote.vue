@@ -10,6 +10,8 @@ export default {
       showContent: false,
       noteTitle: '',
       noteText: '',
+      selectedColor:'',
+      noteId:'2324'
     };
   },
   methods: {
@@ -19,23 +21,30 @@ export default {
     hideContent() {
       this.showContent = false;
     },
+    handleColorSelected(color){
+       this.selectedColor=color;
+    },
     async handleClickOutside() {
       if (this.showContent) {
         const reqData = {
           title: this.noteTitle,
           description: this.noteText,
+          color:this.selectedColor,
         };
         try {
           await createNewNote(reqData);
           this.$emit('noteCreated')
           this.noteTitle = '';
           this.noteText = '';
+          this.selectedColor='';
           this.hideContent();
         } catch (error) {
           console.error("Failed to create note", error);
         }
       }
     },
+   
+    
     checkContent() {
       if (this.noteTitle || this.noteText) {
         this.handleClickOutside();
@@ -50,7 +59,7 @@ export default {
 
 <template>
   <v-container class="take_note" >
-    <v-card class="u-border note-card">
+    <v-card class="u-border note-card" :style="{backgroundColor:selectedColor}" >
       <v-text-field
         @click="toggleContent"
         v-if="!showContent"
@@ -82,7 +91,7 @@ export default {
         ></v-textarea>
        <v-row class="icon-close-row">
         <v-col class="d-flex align-center">
-          <note-icons class="note-icons"></note-icons>
+          <note-icons class="note-icons" :noteId="noteId" @colorSelected="handleColorSelected"></note-icons>
         </v-col>         
          <v-col class="d-flex justify-end align-center">
             <v-btn @click="checkContent" variant="plain">Close</v-btn>

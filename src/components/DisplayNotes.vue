@@ -1,7 +1,10 @@
 <template>
-  <masonry
+  <masonrywall
     :cols="{ 'default': 4, '1100': 3, '700': 2, '500': 1 }"
     :gutter="20"
+    :column-width="250"
+    :gap="6"
+    class="masonry-container"
   >
     <div
       class="masonry-item"
@@ -9,31 +12,44 @@
       :key="note.id"
       @click="openUpdateDialog(note)"
       @mouseover="hoveredNote = note.id"
-      @mouseleave="hoveredNote = null"
+      @mouseleave="hoveredNote = note.id"
     >
-      <v-card class="note-card2">
+      <v-card class="note-card2" :style="{ backgroundColor: note.color || '#ffffff' }">
         <v-card-title class="note-title">{{ note.title }}</v-card-title>
         <v-card-text class="note-description">{{ note.description }}</v-card-text>
         <note-icons
+          @colorSelected="changeCardColor($event, note.id)"
           v-if="hoveredNote === note.id"
           :items="items"
+          :noteId="note.id"
           @itemClick="handleItemClick($event, note.id)"
+          @noteArchived="handleNoteArchived(note.id)"
+
         />
         <v-icon
           v-if="hoveredNote === note.id"
           class="check-circle-btn"
           size="24"
+          style="position: absolute; top: -10px; left: -10px;"
         >
           mdi-check-circle
         </v-icon>
+        <v-icon
+        v-if="hoveredNote === note.id"
+        size="24"
+        style="position: absolute; top: 10px; right: 10px;">
+          mdi-pin
+        </v-icon>
       </v-card>
     </div>
-  </masonry>
+  </masonrywall>
 </template>
-  <script>
-import { deleteNote } from '@/Services/NotesService';
+
+<script>
+import { deleteNote, archiveNote } from '@/Services/NotesService';
 import NoteIcons from './NoteIcons.vue';
 import MasonryWall from '@yeger/vue-masonry-wall';
+
 export default {
   components: {
     NoteIcons,
@@ -56,7 +72,6 @@ export default {
     },
   },
   methods: {
-   
     async handleItemClick(index, noteId) {
       if (index === 0) {
         try {
@@ -76,39 +91,67 @@ export default {
     openUpdateDialog(note) {
       this.$emit('openUpdateDialog', note);
     },
+    
+    changeCardColor(color, noteId) {
+      console.log(noteId,"notecolordisplay");
+      const note = this.notes.find((note) => note.id === noteId);
+      if (note) {
+        note.color = color;
+      }
+},
+    async handleNoteArchived(noteId) {
+      try {
+        const data = {
+          noteIdList: [noteId],
+          isArchived: true,
+        };
+
+        const response = await archiveNote(data);
+        console.log('Note archived:', response);
+        this.$emit('noteArchived', noteId);
+      } catch (error) {
+        console.error('Error archiving note:', error);
+      }
+    },
   },
 };
-</script> 
+</script>
 
- 
 <style scoped>
-.note-card2 {
-  width: 100%;
-  margin: 10px 0;
+.masonry-container {
   display: flex;
-  flex-direction: column;
-  justify-content: space-around;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.check-circle-btn{
+  position:absolute;
+  z-index:10000;
+}
+.note-card2 {
   position: relative;
-  overflow: hidden;
-  z-index: 0;
-  border:1px solid rgb(197, 193, 193);
-  border-bottom: none;
-}
-
-
-.check-circle-btn {
-  position: absolute;
-  top: -12px; 
-  left: -12px; 
-  z-index:10;
-  display:none;
-}
-.note-card2:hover .check-circle-btn {
-  display: block; 
+  z-index:0;
+  overflow: visible !important;
 }
 .masonry-item {
+  width: 100%;
   margin-bottom: 20px;
-  
- 
+}
+
+@media (min-width: 500px) {
+  .masonry-item {
+    width: calc(50% - 20px);
+  }
+}
+
+@media (min-width: 700px) {
+  .masonry-item {
+    width: calc(33.33% - 20px);
+  }
+}
+
+@media (min-width: 1100px) {
+  .masonry-item {
+    width: calc(25% - 20px);
+  }
 }
 </style>
