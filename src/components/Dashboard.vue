@@ -30,7 +30,6 @@ export default {
       if (!this.labels) {
         return this.items;
       }
-      // Combine items and labels for the navigation drawer
       const labelItems = this.labels.map(label => ({
         icon: 'mdi-label-outline',
         title: label.label,
@@ -77,7 +76,6 @@ export default {
   },
   mounted(){
     this.refreshLabels();
-  
   },
 };
 </script>
@@ -162,7 +160,7 @@ export default {
                 <GetAllNotes :selected-item="selectedItem" @showLabelDialog="showLabelDialog = true"/>
               </v-main>
               <v-dialog v-model="showLabelDialog" max-width="400px">
-                <EditLabelDialog @closevent="showLabelDialog = false" @refreshLabel="refreshLabels" />
+                <EditLabelDialog :plabels="this.labels" @closevent="showLabelDialog = false" @refreshLabel="refreshLabels" />
               </v-dialog>
 </v-app>
 </template>

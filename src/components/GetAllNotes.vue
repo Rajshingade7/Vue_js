@@ -3,6 +3,7 @@ import CreateNote from './CreateNote.vue';
 import DisplayNotes from './DisplayNotes.vue';
 import UpdateNote from './UpdateNote.vue';
 import EditLabelDialog from './EditLabelDialog.vue';
+import { getAllLabels } from '@/Services/LabelService';
 import { GetNotesList,GetArchivedNotesList,GetTrashedNotelist } from '@/Services/NotesService';
 export default {
   props:['selectedItem'],
@@ -20,6 +21,7 @@ export default {
     notes: [],
     archivedNotes: [],
     trashNotes:[],
+    labels:[],
     showArchivedNotes: false,
   };
 },
@@ -56,8 +58,18 @@ computed: {
       console.error('Error fetching trashed notes:', error);
     }
   },
+  async fetchLabels() {
+      try {
+        const response = await getAllLabels();
+        this.labels = response.data.data.details;
+        console.log(this.labels);
+      } catch (error) {
+        console.error('Error fetching labels:', error);
+      }
+    },
     openLabelDailog(){
      this.showLabelDialog = true;
+     this.fetchLabels();
       },
     closeLabelDialog(){
       this.showLabelDialog = false;
@@ -71,7 +83,7 @@ computed: {
       console.error('Error handling note deletion:', error);
     }},
     async refreshNotes(){
-      await Promise.all([this.fetchNotes(), this.fetchArchivedNotes(), this.fetchTrashNotes()]);
+      await Promise.all([this.fetchNotes(), this.fetchArchivedNotes(), this.fetchTrashNotes(), this.fetchLabels()]);
 
     },
     openUpdateDialog(note) {
@@ -91,7 +103,7 @@ computed: {
   },
   selectedItem(val) {
       if (val === 'edit') {
-        this.showLabelDialog = true;
+        this.openLabelDailog();
       }
     },
 
@@ -130,10 +142,12 @@ computed: {
   ></display-notes>
       <update-note v-if="selectedNote" :note="selectedNote" :dialog.sync="dialog" @noteUpdated="refreshNotes"></update-note>
       <edit-label-dialog
-      v-if="selectedItem === 'edit'"
+      v-if="showLabelDialog"
+      :ilabels="labels"
       @closevent="closeLabelDialog"
       @refreshLabel="refreshNotes"
-    />    </v-container>
+    />   
+  </v-container> 
   </template>
 
   

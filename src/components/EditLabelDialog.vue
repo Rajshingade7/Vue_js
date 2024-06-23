@@ -2,6 +2,12 @@
 import { addLabels, deleteLabels, updateLabels } from '../Services/LabelService'
 
 export default {
+  props: {
+    plabels: {
+      type: Array,
+      required: true,
+    },
+  },
   data() {
     return {
       hoverIndex: null,
@@ -9,6 +15,10 @@ export default {
       title: ''
     }
   },
+  mounted() {
+    console.log('label received in EditLabelDialog:', this.plabels); // Debugging line
+  },
+  
   methods: {
     closeevent() {
       this.$emit('closevent')
@@ -20,19 +30,20 @@ export default {
       this.editingIndex = null
     },
     addNewLabel(val) {
-      console.log('Added Label:' + val)
-      const userid = localStorage.getItem('userId')
+      console.log('Added Label:' + val);
+      const userid = localStorage.getItem('userId');
       const newlabel = {
         label: this.title,
         isDeleted: false,
         userId: userid
-      }
-      console.log(newlabel)
+      };
+      console.log(newlabel);
       addLabels(newlabel)
-        .then((data) => console.log(data))
-        .catch((err) => console.log(err))
-      this.$emit('refreshLabel')
-      this.title = ''
+        .then(() => {
+          this.$emit('refreshLabel');
+          this.title = '';
+        })
+        .catch(err => console.log(err));
     },
     editLabel(id, label) {
       const updateLabelData = {
@@ -41,6 +52,7 @@ export default {
       updateLabels(id, updateLabelData)
         .then((data) => console.log(data))
         .catch((err) => console.log(err))
+      this.$emit('refreshLabel');
     },
     deleteLabel(id) {
       deleteLabels(id)
@@ -49,9 +61,7 @@ export default {
       this.$emit('refreshLabel')
     }
   },
-  props: {
-    Ilabels: Array
-  }
+ 
 }
 </script>
 
@@ -59,7 +69,7 @@ export default {
   <v-card title="Edit labels" class="u-card">
     <div class="d-flex">
       <div class="pa-2 pb-2">
-        <v-icon icon="mdi-window-close"></v-icon>
+        <v-icon @click="closeevent" icon="mdi-window-close"></v-icon>
       </div>
       <v-text-field
         v-model.trim="title"
@@ -73,8 +83,8 @@ export default {
     </div>
     
     <div
-      v-for="(item, index) in Ilabels"
-      :key="index"
+      v-for="(item, index) in plabels"
+      :key="item.id"
       class="d-flex"
       @mouseover="hoverIndex = index"
       @mouseleave="hoverIndex = null"

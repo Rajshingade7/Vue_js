@@ -103,17 +103,20 @@
         if(index===0){
           this.$emit('itemClick', index);
         }
+        else if(index===1){
+          this.$emit('itemClick', index);
+        }
         
       },
       async selectColor(color) {
         this.selectedColor=color;
         try {
           if(this.noteId){
-            console.log(noteIdList,"noteidlist");
+            console.log([this.noteId],"noteidlist");
             const response = await changeColorForNote({
-          noteIdList: [this.noteId],
-          color,
-        });
+            noteIdList: [this.noteId],
+            color,
+          });
         console.log('Note color changed:', response);
 
           }

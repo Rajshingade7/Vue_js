@@ -17,47 +17,94 @@
       <v-card class="note-card2" :style="{ backgroundColor: note.color || '#ffffff' }">
         <v-card-title class="note-title">{{ note.title }}</v-card-title>
         <v-card-text class="note-description">{{ note.description }}</v-card-text>
-        <note-icons
-          @colorSelected="changeCardColor($event, note.id)"
-          v-if="hoveredNote === note.id"
-          :items="items"
-          :noteId="note.id"
-          @itemClick="handleItemClick($event, note.id)"
-          @noteArchived="handleNoteArchived(note.id)"
+        <div class="note-labels">
+          <span
+          v-for="notes in note.noteLabels"
 
-        />
-        <v-icon
-          v-if="hoveredNote === note.id"
-          class="check-circle-btn"
-          size="24"
-          style="position: absolute; top: -10px; left: -10px;"
-        >
-          mdi-check-circle
-        </v-icon>
+            class="note-label"
+          >
+            {{ notes.label }}
+          </span>
+        </div>
+        <div class="icon-container">
+          <note-icons
+            @colorSelected="changeCardColor($event, note.id)"
+            v-if="hoveredNote === note.id"
+            :items="items"
+            :noteId="note.id"
+            @itemClick="handleItemClick($event, note.id)"
+            @noteArchived="handleNoteArchived(note.id)"
+          />
+         
+        </div>
         <v-icon
         v-if="hoveredNote === note.id"
+        class="check-circle-btn"
         size="24"
-        style="position: absolute; top: 10px; right: 10px;">
-          mdi-pin
-        </v-icon>
+      >
+        mdi-check-circle
+      </v-icon>
+      <v-icon
+        v-if="hoveredNote === note.id"
+        size="24"
+        class="pin-icon"
+      >
+        mdi-pin-outline
+      </v-icon>
+      <div v-if="showLabelList && selectedNoteId === note.id" class="label-list" ref="labelList">
+        <v-list dense>
+
+        <v-header class="label-subheader">Label Note</v-header> 
+
+        
+          <v-text-field
+        placeholder="Create new label"
+        density="compact"
+        variant="flat"
+        append-inner-icon="mdi-magnify"
+      ></v-text-field>
+     
+        <v-list-item v-for="label in labels" :key="label.id" >
+          <div class="label-list-item">
+            <v-checkbox
+            :input-value="selectedLabels.includes(label.id)"
+            @change="toggleLabel(label.id)"
+          ></v-checkbox>
+          <v-list-item-content>{{ label.label }}</v-list-item-content>
+          </div>
+          
+        </v-list-item>
+          
+        </v-list>
+        
+      </div>
       </v-card>
+      
     </div>
-  </masonrywall>
+   </masonrywall>
 </template>
 
 <script>
 import { deleteNote, archiveNote } from '@/Services/NotesService';
 import NoteIcons from './NoteIcons.vue';
 import MasonryWall from '@yeger/vue-masonry-wall';
+import AddLabelPopup from './AddLabelPopup.vue'
+import { getAllLabels } from '@/Services/LabelService';
+
 
 export default {
   components: {
     NoteIcons,
     MasonryWall,
+    AddLabelPopup,
   },
   data() {
     return {
       hoveredNote: null,
+      selectedNoteId: null,
+      showLabelList: false,
+      labels: [],
+      selectedLabels: [],
     };
   },
   props: {
@@ -87,6 +134,9 @@ export default {
           console.error('Error deleting note:', error);
         }
       }
+      else if(index===1){
+       this.openLabelList(noteId);
+      }
     },
     openUpdateDialog(note) {
       this.$emit('openUpdateDialog', note);
@@ -113,6 +163,47 @@ export default {
         console.error('Error archiving note:', error);
       }
     },
+    async openLabelList(noteId) {
+      this.selectedNoteId = noteId;
+      this.showLabelList = true;
+      this.selectedLabels=[];
+      try {
+        const response = await getAllLabels();
+        this.labels = response.data.data.details;
+      } catch (error) {
+        console.error('Error fetching labels:', error);
+      }
+      document.addEventListener('click', this.handleClickOutside);
+
+    },
+    toggleLabel(labelId) {
+      const index = this.selectedLabels.indexOf(labelId);
+      if (index === -1) {
+        this.selectedLabels.push(labelId);
+      } else {
+        this.selectedLabels.splice(index, 1);
+      }
+    },
+    saveLabels(noteId) {
+      console.log('Selected labels for note', noteId, ':', this.selectedLabels);
+      this.closeLabelList();
+    },
+    closeLabelList() {
+      this.showLabelList = false;
+      this.selectedNoteId = null;
+      document.removeEventListener('click', this.handleClickOutside);
+
+    },
+    handleClickOutside(event) {
+      const labelList = this.$refs.labelList;
+      if (labelList && !labelList.contains(event.target)) {
+        this.saveLabels(this.selectedNoteId);
+      }
+    },
+    getNoteLabels(noteId) {
+      return this.labels.filter((label) => this.selectedLabels.includes(label.id));
+    },
+  
   },
 };
 </script>
@@ -123,18 +214,81 @@ export default {
   flex-wrap: wrap;
   justify-content: space-between;
 }
-.check-circle-btn{
-  position:absolute;
-  z-index:10000;
-}
 .note-card2 {
   position: relative;
-  z-index:0;
+  z-index: 0;
   overflow: visible !important;
+  padding-bottom: 40px;
+}
+.icon-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  box-sizing: border-box;
+}
+.check-circle-btn {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  z-index: 10000;
+}
+.pin-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10000;
 }
 .masonry-item {
   width: 100%;
   margin-bottom: 20px;
+  position: relative;
+
+}
+.label-list {
+  position: absolute ;
+  width:100px;
+  height:auto;
+  padding:0;
+  margin:0;
+  left:0;
+  top:100%;
+  background-color: white;
+  z-index: 10001;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  overflow: visible !important;
+  min-width: 200px;
+}
+.label-list-item{
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  
+}
+.v-list-item-content {
+  flex-grow: 10;
+}
+.v-checkbox{
+  margin-top: 20px;
+}
+.label-subheader{
+  font-weight: 500;
+  padding: 15px;
+}
+.note-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 10px;
+}
+.note-label {
+  background-color: #e0e0e0;
+  border-radius: 12px;
+  padding: 4px 8px;
+  font-size: 12px;
 }
 
 @media (min-width: 500px) {

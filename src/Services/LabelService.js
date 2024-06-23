@@ -6,6 +6,7 @@ export const getAllLabels = () => {
     'Content-Type': 'application/json',
     Authorization: token
   }
+  console.log("calling getalllabelapi");
   return Get('noteLabels/getNoteLabelList', { headers })
 }
 
@@ -15,6 +16,7 @@ export const addLabels = (label) => {
     'Content-Type': 'application/json',
     Authorization: token
   }
+  console.log("calling add label api")
   return Post('noteLabels', label, { headers })
 }
 
@@ -24,6 +26,7 @@ export const deleteLabels = (label) => {
     'Content-Type': 'application/json',
     Authorization: token
   }
+  console.log("calling delete label api");
   return Delete('noteLabels/'+label+'/deleteNoteLabel', { headers })
 }
 
@@ -33,5 +36,6 @@ export const updateLabels = (id,data) => {
     'Content-Type': 'application/json',
     Authorization: token
   }
+  console.log("calling update label api");
   return Patch(`noteLabels/${id}`, data, { headers })
 }
