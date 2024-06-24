@@ -39,3 +39,24 @@ export const updateLabels = (id,data) => {
   console.log("calling update label api");
   return Patch(`noteLabels/${id}`, data, { headers })
 }
+
+
+export const addLabelToNote = (noteId, labelId) => {
+  const token = localStorage.getItem('token')
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: token
+  }
+  console.log("calling add label to note api")
+  return Post(`notes/${noteId}/addLabelToNotes/${labelId}/add`, null, { headers })
+}
+
+export const removeLabelFromNote = (noteId, labelId) => {
+  const token = localStorage.getItem('token')
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: token
+  }
+  console.log("calling remove label from note api")
+  return Post(`notes/${noteId}/addLabelToNotes/${labelId}/remove`, null, { headers })
+}

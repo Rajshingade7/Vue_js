@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <masonrywall
     :cols="{ 'default': 4, '1100': 3, '700': 2, '500': 1 }"
     :gutter="20"
@@ -8,7 +8,7 @@
   >
     <div
       class="masonry-item"
-      v-for="note in reversedNotes"
+      v-for="note in pinnedNotes"
       :key="note.id"
       @click="openUpdateDialog(note)"
       @mouseover="hoveredNote = note.id"
@@ -48,6 +48,8 @@
         v-if="hoveredNote === note.id"
         size="24"
         class="pin-icon"
+        @click.stop="togglePin(note.id)"
+
       >
         mdi-pin-outline
       </v-icon>
@@ -82,17 +84,185 @@
       
     </div>
    </masonrywall>
+</template> -->
+<template>
+  <div>
+    <h5>Pinned</h5>
+    <masonrywall
+      :cols="{ 'default': 4, '1100': 3, '700': 2, '500': 1 }"
+      :gutter="20"
+      :column-width="250"
+      :gap="6"
+      class="masonry-container"
+    >
+      <div
+        class="masonry-item"
+        v-for="note in pinnedNotes"
+        :key="note.id"
+        @click="openUpdateDialog(note)"
+        @mouseover="hoveredNote = note.id"
+        @mouseleave="hoveredNote = note.id"
+      >
+        <v-card class="note-card2" :style="{ backgroundColor: note.color || '#ffffff' }">
+          <v-card-title class="note-title">{{ note.title }}</v-card-title>
+          <v-card-text class="note-description">{{ note.description }}</v-card-text>
+          <div class="note-labels">
+            <span v-for="label in note.noteLabels" :key="label.id" class="note-label">{{ label.label }}</span>
+          </div>
+          <div class="icon-container">
+            <note-icons
+              @colorSelected="changeCardColor($event, note.id)"
+              v-if="hoveredNote === note.id"
+              :items="items"
+              :noteId="note.id"
+              @itemClick="handleItemClick($event, note.id)"
+              @noteArchived="handleNoteArchived(note.id)"
+            />
+          </div>
+          <v-icon
+            v-if="hoveredNote === note.id"
+            class="check-circle-btn"
+            size="24"
+            @click.stop="togglePin(note.id)"
+          >
+            mdi-check-circle
+          </v-icon>
+          <v-icon
+            v-if="hoveredNote === note.id"
+            size="24"
+            class="pin-icon"
+            @click.stop="togglePin(note.id)"
+          >
+            mdi-pin
+          </v-icon>
+          <div v-if="showLabelList && selectedNoteId === note.id" class="label-list" ref="labelList" v-click-outside="closeLabelList">
+        <v-list dense>
+
+        <v-header class="label-subheader">Label Note</v-header> 
+
+        
+          <v-text-field
+        placeholder="Create new label"
+        density="compact"
+        variant="flat"
+        append-inner-icon="mdi-magnify"
+      ></v-text-field>
+     
+        <v-list-item v-for="label in labels" :key="label.id" >
+          <div class="label-list-item">
+            <v-checkbox
+            :input-value="selectedLabels.includes(label.id)"
+            @change="toggleLabel(label.id)"
+          ></v-checkbox>
+          <v-list-item-content>{{ label.label }}</v-list-item-content>
+          </div>
+          
+        </v-list-item>
+          
+        </v-list>
+        
+      </div>
+        </v-card>
+      </div>
+    </masonrywall>
+
+    <h5>Others</h5>
+    <masonrywall
+      :cols="{ 'default': 4, '1100': 3, '700': 2, '500': 1 }"
+      :gutter="20"
+      :column-width="250"
+      :gap="6"
+      class="masonry-container"
+    >
+      <div
+        class="masonry-item"
+        v-for="note in otherNotes"
+        :key="note.id"
+        @click="openUpdateDialog(note)"
+        @mouseover="hoveredNote = note.id"
+        @mouseleave="hoveredNote = note.id"
+      >
+        <v-card class="note-card2" :style="{ backgroundColor: note.color || '#ffffff' }">
+          <v-card-title class="note-title">{{ note.title }}</v-card-title>
+          <v-card-text class="note-description">{{ note.description }}</v-card-text>
+          <div class="note-labels">
+            <span v-for="label in note.noteLabels" :key="label.id" class="note-label">{{ label.label }}</span>
+          </div>
+          <div class="icon-container">
+            <note-icons
+              @colorSelected="changeCardColor($event, note.id)"
+              v-if="hoveredNote === note.id"
+              :items="items"
+              :noteId="note.id"
+              @itemClick="handleItemClick($event, note.id)"
+              @noteArchived="handleNoteArchived(note.id)"
+            />
+          </div>
+          <v-icon
+            v-if="hoveredNote === note.id"
+            class="check-circle-btn"
+            size="24"
+            @click.stop="togglePin(note.id)"
+          >
+            mdi-check-circle
+          </v-icon>
+          <v-icon
+            v-if="hoveredNote === note.id"
+            size="24"
+            class="pin-icon"
+            @click.stop="togglePin(note.id)"
+          >
+            mdi-pin-outline
+          </v-icon>
+        <div v-if="showLabelList && selectedNoteId === note.id" class="label-list" ref="labelList" v-click-outside="closeLabelList">
+        <v-list dense>
+
+        <v-header class="label-subheader">Label Note</v-header> 
+
+        
+          <v-text-field
+        placeholder="Create new label"
+        density="compact"
+        variant="flat"
+        append-inner-icon="mdi-magnify"
+      ></v-text-field>
+     
+        <v-list-item v-for="label in labels" :key="label.id" >
+          <div class="label-list-item">
+            <v-checkbox
+            :input-value="selectedLabels.includes(label.id)"
+            @change="toggleLabel(label.id)"
+          ></v-checkbox>
+          <v-list-item-content>{{ label.label }}</v-list-item-content>
+          </div>
+          
+          
+        </v-list-item>
+          
+        </v-list>
+        
+          
+        
+      </div>
+        </v-card>
+      </div>
+    </masonrywall>
+  </div>
 </template>
 
 <script>
+import vClickOutside from 'v-click-outside';
 import { deleteNote, archiveNote } from '@/Services/NotesService';
 import NoteIcons from './NoteIcons.vue';
 import MasonryWall from '@yeger/vue-masonry-wall';
 import AddLabelPopup from './AddLabelPopup.vue'
-import { getAllLabels } from '@/Services/LabelService';
+import { getAllLabels,addLabelToNote,removeLabelFromNote } from '@/Services/LabelService';
 
 
 export default {
+  directives: {
+    'click-outside': vClickOutside.directive
+  },
   components: {
     NoteIcons,
     MasonryWall,
@@ -117,6 +287,12 @@ export default {
     reversedNotes() {
       return [...this.notes].reverse();
     },
+    pinnedNotes() {
+    return this.notes.filter(note => note.isPinned);
+  },
+  otherNotes() {
+    return this.notes.filter(note => !note.isPinned);
+  },
   },
   methods: {
     async handleItemClick(index, noteId) {
@@ -176,13 +352,25 @@ export default {
       document.addEventListener('click', this.handleClickOutside);
 
     },
-    toggleLabel(labelId) {
-      const index = this.selectedLabels.indexOf(labelId);
-      if (index === -1) {
-        this.selectedLabels.push(labelId);
+    async toggleLabel(labelId) {
+
+      try {
+      const selectedNote = this.reversedNotes.find(note => note.id === this.selectedNoteId);
+      const labelExists = selectedNote.noteLabels.some(label => label.id === labelId);
+
+      if (labelExists) {
+        console.log("calling remove label from note api");
+        await removeLabelFromNote(this.selectedNoteId, labelId);
+        selectedNote.noteLabels = selectedNote.noteLabels.filter(label => label.id !== labelId);
       } else {
-        this.selectedLabels.splice(index, 1);
+        console.log("calling add label to note api");
+        await addLabelToNote(this.selectedNoteId, labelId);
+        selectedNote.noteLabels.push({ id: labelId, label: this.labels.find(label => label.id === labelId).label });
       }
+
+    } catch (error) {
+      console.error("Error toggling label:", error);
+    }
     },
     saveLabels(noteId) {
       console.log('Selected labels for note', noteId, ':', this.selectedLabels);
@@ -196,15 +384,34 @@ export default {
     },
     handleClickOutside(event) {
       const labelList = this.$refs.labelList;
-      if (labelList && !labelList.contains(event.target)) {
-        this.saveLabels(this.selectedNoteId);
-      }
+      if (Array.isArray(labelList)) {
+    const isOutside = labelList.every(element => !element.contains(event.target));
+    if (isOutside) {
+      this.saveLabels(this.selectedNoteId);
+    }
+  } else if (labelList && typeof labelList.contains === 'function' && !labelList.contains(event.target)) {
+    this.saveLabels(this.selectedNoteId);
+  }
     },
     getNoteLabels(noteId) {
       return this.labels.filter((label) => this.selectedLabels.includes(label.id));
     },
+    togglePin(noteId) {
+    const note = this.notes.find(note => note.id === noteId);
+    if (note) {
+      note.isPinned = !note.isPinned;
+      this.$emit('notePinned', note);  
+    }
+  },
   
   },
+  watch: {
+  selectedNoteId(newNoteId) {
+    const selectedNote = this.reversedNotes.find(note => note.id === newNoteId);
+    this.selectedLabels = selectedNote ? selectedNote.noteLabels.map(label => label.id) : [];
+  }
+},
+
 };
 </script>
 
@@ -212,13 +419,14 @@ export default {
 .masonry-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 .note-card2 {
   position: relative;
   z-index: 0;
   overflow: visible !important;
   padding-bottom: 40px;
+  margin:10px;
 }
 .icon-container {
   position: absolute;
@@ -260,6 +468,7 @@ export default {
   z-index: 10001;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   overflow: visible !important;
+  overflow:scroll;
   min-width: 200px;
 }
 .label-list-item{
@@ -285,7 +494,8 @@ export default {
   margin-top: 10px;
 }
 .note-label {
-  background-color: #e0e0e0;
+  
+  background-color: #f1f1f1b9;
   border-radius: 12px;
   padding: 4px 8px;
   font-size: 12px;
